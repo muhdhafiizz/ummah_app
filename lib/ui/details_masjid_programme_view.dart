@@ -21,7 +21,6 @@ class DetailsMasjidProgrammeView extends StatelessWidget {
     final userCity = prayerProvider.city?.toLowerCase();
     final userCountry = prayerProvider.country?.toLowerCase();
 
-    // 🔹 Filter programmes by search + location
     final allProgrammes = provider.filteredProgrammes;
 
     final programmes = allProgrammes.where((programme) {

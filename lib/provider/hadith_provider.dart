@@ -22,10 +22,22 @@ class HadithProvider extends ChangeNotifier {
   bool get hasMore => _hasMore;
   String? get error => _error;
 
+  String get currentHadithId {
+    final hadith = currentHadith;
+    if (hadith == null) return "";
+    return hadith.id.toString(); 
+  }
+
+  int get currentHadithNumberInt {
+    final numStr = currentHadith?.hadithNumber ?? "0";
+    return int.tryParse(numStr) ?? 0;
+  }
+
   Future<void> loadHadiths(
     String bookSlug, {
     int page = 1,
     String? chapterId,
+    String? initialHadithNumber,
     bool forceRefresh = false,
   }) async {
     _isLoading = true;
@@ -58,6 +70,11 @@ class HadithProvider extends ChangeNotifier {
               _hadiths.addAll(cachedHadiths);
             }
             _currentPage = page;
+
+            // ✅ Set the correct hadith by number if provided
+            if (initialHadithNumber != null) {
+              _setSelectedHadithByNumber(initialHadithNumber);
+            }
           } else {
             _hasMore = false;
           }
@@ -68,6 +85,7 @@ class HadithProvider extends ChangeNotifier {
         }
       }
 
+      // Fetch from API
       final newHadiths = await _service.fetchHadiths(
         bookSlug: bookSlug,
         page: page,
@@ -89,6 +107,15 @@ class HadithProvider extends ChangeNotifier {
 
       _currentPage = page;
 
+      if (initialHadithNumber != null && initialHadithNumber.isNotEmpty) {
+        final index = _hadiths.indexWhere(
+          (h) => h.hadithNumber == initialHadithNumber,
+        );
+        if (index != -1) {
+          _selectedIndex = index;
+        }
+      }
+
       await prefs.setString(
         cacheKey,
         json.encode(newHadiths.map((h) => h.toJson()).toList()),
@@ -100,6 +127,17 @@ class HadithProvider extends ChangeNotifier {
 
     _isLoading = false;
     notifyListeners();
+  }
+
+  void _setSelectedHadithByNumber(String hadithNumber) {
+    print("DEBUG → trying to select hadithNumber=$hadithNumber");
+    final index = _hadiths.indexWhere(
+      (h) => h.hadithNumber?.toString() == hadithNumber.toString(),
+    );
+    print("DEBUG → matched index=$index");
+    if (index != -1) {
+      _selectedIndex = index;
+    }
   }
 
   void selectHadith(int index) {
