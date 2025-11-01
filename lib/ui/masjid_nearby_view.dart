@@ -101,33 +101,7 @@ Widget _buildShimmerLoading() {
     children: List.generate(4, (index) {
       return Padding(
         padding: const EdgeInsets.only(bottom: 16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 10),
-            ShimmerLoadingWidget(width: 150, height: 20, isCircle: false),
-            SizedBox(height: 5),
-            ShimmerLoadingWidget(width: 100, height: 20, isCircle: false),
-            SizedBox(height: 5),
-            ShimmerLoadingWidget(width: 70, height: 20, isCircle: false),
-            SizedBox(height: 15),
-            Row(
-              children: [
-                const ShimmerLoadingWidget(
-                  width: 70,
-                  height: 20,
-                  isCircle: false,
-                ),
-                SizedBox(width: 5),
-                const ShimmerLoadingWidget(
-                  width: 50,
-                  height: 50,
-                  isCircle: true,
-                ),
-              ],
-            ),
-          ],
-        ),
+        child: ShimmerLoadingWidget(height: 150, width: double.infinity),
       );
     }),
   );

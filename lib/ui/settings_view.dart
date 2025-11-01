@@ -9,6 +9,7 @@ import 'package:ramadhan_companion_app/provider/login_provider.dart';
 import 'package:ramadhan_companion_app/provider/masjid_programme_provider.dart';
 import 'package:ramadhan_companion_app/provider/prayer_times_provider.dart';
 import 'package:ramadhan_companion_app/provider/sadaqah_provider.dart';
+import 'package:ramadhan_companion_app/ui/details_bookmark_view.dart';
 import 'package:ramadhan_companion_app/ui/login_view.dart';
 import 'package:ramadhan_companion_app/ui/notifications_settings_view.dart';
 import 'package:ramadhan_companion_app/ui/prayer_times_view.dart';
@@ -26,9 +27,8 @@ class SettingsView extends StatelessWidget {
 
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final overlayStyle = isDarkMode
-        ? SystemUiOverlayStyle
-              .light
-        : SystemUiOverlayStyle.dark; 
+        ? SystemUiOverlayStyle.light
+        : SystemUiOverlayStyle.dark;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: overlayStyle,
@@ -89,6 +89,19 @@ class SettingsView extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (_) => const NotificationsSettingsView(),
+                            ),
+                          );
+                        },
+                      ),
+                      _buildListTile(
+                        context,
+                        title: 'Your bookmark',
+                        icon: Icons.bookmark_outline,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const DetailsBookmarkView(),
                             ),
                           );
                         },

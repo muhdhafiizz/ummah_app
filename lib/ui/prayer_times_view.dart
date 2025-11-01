@@ -21,9 +21,11 @@ import 'package:ramadhan_companion_app/provider/masjid_programme_provider.dart';
 import 'package:ramadhan_companion_app/provider/notifications_provider.dart';
 import 'package:ramadhan_companion_app/provider/prayer_times_provider.dart';
 import 'package:ramadhan_companion_app/provider/quran_provider.dart';
+import 'package:ramadhan_companion_app/ui/details_bookmark_view.dart';
 import 'package:ramadhan_companion_app/ui/details_masjid_programme_view.dart';
 import 'package:ramadhan_companion_app/ui/details_verse_view.dart';
 import 'package:ramadhan_companion_app/ui/hadith_books_view.dart';
+import 'package:ramadhan_companion_app/ui/hadith_view.dart';
 import 'package:ramadhan_companion_app/ui/islamic_calendar_view.dart';
 import 'package:ramadhan_companion_app/ui/masjid_nearby_view.dart';
 import 'package:ramadhan_companion_app/ui/notifications_view.dart';
@@ -38,6 +40,7 @@ import 'package:ramadhan_companion_app/widgets/custom_button.dart';
 import 'package:ramadhan_companion_app/widgets/custom_pill_snackbar.dart';
 import 'package:ramadhan_companion_app/widgets/custom_textfield.dart';
 import 'package:ramadhan_companion_app/widgets/shimmer_loading.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'dart:convert';
 import 'dart:math';
@@ -751,6 +754,40 @@ Widget _buildProgrammeCard(
                       CircleAvatar(
                         backgroundColor: AppColors.lightGray.withOpacity(1),
                         child: IconButton(
+                          icon: const Icon(
+                            Icons.share_outlined,
+                            color: Colors.black,
+                          ),
+                          onPressed: () async {
+                            final dateFormatted = DateFormat(
+                              "EEEE, d MMM yyyy • h:mm a",
+                            ).format(programme.dateTime);
+
+                            final message =
+                                '''
+📣 *${programme.title}*
+
+🕌 Hosted by: ${programme.masjidName}
+📅 Date & Time: $dateFormatted
+${programme.isOnline ? "🌐 Join Online" : "📍 Location: ${programme.location ?? "At the Masjid"}"}
+
+You’re invited to join this blessed Masjid programme!
+
+Download our app to explore more upcoming events and stay connected with your Masjid:
+👉 Ummah: Muslim Community
+📲 Get it on Google Play or App Store
+
+#MasjidProgramme #IslamicEvent #JoinTheBlessing
+''';
+
+                            await Share.share(message);
+                          },
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      CircleAvatar(
+                        backgroundColor: AppColors.lightGray.withOpacity(1),
+                        child: IconButton(
                           icon: const Icon(Icons.alarm, color: Colors.black),
                           onPressed: () {
                             final event = Event(
@@ -797,7 +834,44 @@ Widget _buildProgrammeCard(
                       CircleAvatar(
                         backgroundColor: AppColors.lightGray.withOpacity(1),
                         child: IconButton(
-                          icon: const Icon(Icons.alarm, color: Colors.black),
+                          icon: const Icon(
+                            Icons.share_outlined,
+                            color: Colors.black,
+                          ),
+                          onPressed: () async {
+                            final dateFormatted = DateFormat(
+                              "EEEE, d MMM yyyy • h:mm a",
+                            ).format(programme.dateTime);
+
+                            final message =
+                                '''
+📣 *${programme.title}*
+
+🕌 Hosted by: ${programme.masjidName}
+📅 Date & Time: $dateFormatted
+${programme.isOnline ? "🌐 Join Online from ${programme.joinLink}" : "📍 Location: ${programme.location ?? "At the Masjid"}"}
+
+You’re invited to join this blessed Masjid programme!
+
+Download our app to explore more upcoming events and stay connected with your Masjid:
+👉 Ummah: Muslim Community
+📲 Get it on Google Play or App Store
+
+#MasjidProgramme #IslamicEvent #JoinTheBlessing
+''';
+
+                            await Share.share(message);
+                          },
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      CircleAvatar(
+                        backgroundColor: AppColors.lightGray.withOpacity(1),
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.share_outlined,
+                            color: Colors.black,
+                          ),
                           onPressed: () {
                             final event = Event(
                               title: programme.title,
@@ -1409,24 +1483,37 @@ Widget _buildBookmark(BuildContext context) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      _buildTitleText('Your Bookmarks'),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _buildTitleText("Your Bookmarks"),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            child: CircleAvatar(
+              backgroundColor: AppColors.betterGray.withOpacity(0.3),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => DetailsBookmarkView()),
+                  );
+                },
+                child: Icon(
+                  Icons.arrow_forward,
+                  color: AppColors.violet.withOpacity(1),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
       SizedBox(
         height: 90,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: provider.bookmarks.length,
           itemBuilder: (context, index) {
-            final bookmark = provider.bookmarks[index];
-            if (bookmark.startsWith("page:")) {
-              final page = int.tryParse(bookmark.split(":")[1]) ?? 0;
-              return _buildPageBookmarkCard(context, page);
-            } else {
-              final parts = bookmark.split(":");
-              if (parts.length < 2) return const SizedBox.shrink();
-              final surahNum = int.tryParse(parts[0]) ?? 0;
-              final verseNum = int.tryParse(parts[1]) ?? 0;
-              return _buildVerseBookmarkCard(context, surahNum, verseNum);
-            }
+            return _buildBookmarkCard(context, provider.bookmarks[index]);
           },
         ),
       ),
@@ -1434,56 +1521,71 @@ Widget _buildBookmark(BuildContext context) {
   );
 }
 
-Widget _buildPageBookmarkCard(BuildContext context, int page) {
+Widget _buildBookmarkCard(BuildContext context, String bookmark) {
   final qProvider = Provider.of<QuranProvider>(context, listen: false);
-  final pagesMap = qProvider.getQuranPages();
-  final pageVerses = pagesMap[page];
-  final firstSurahName = (pageVerses != null && pageVerses.isNotEmpty)
-      ? quran.getSurahName(pageVerses.first['surah']!)
-      : 'Unknown';
 
-  return GestureDetector(
-    onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => QuranPageView(pageNumber: page)),
-      );
-    },
-    child: Container(
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.15),
-            blurRadius: 6,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Page $page",
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-          ),
-          Text(firstSurahName, style: const TextStyle(color: Colors.grey)),
-        ],
-      ),
-    ),
-  );
-}
+  if (bookmark.startsWith("page:")) {
+    final page = int.tryParse(bookmark.split(":")[1]) ?? 0;
+    final pagesMap = qProvider.getQuranPages();
+    final pageVerses = pagesMap[page];
+    final firstSurahName = (pageVerses != null && pageVerses.isNotEmpty)
+        ? quran.getSurahName(pageVerses.first['surah']!)
+        : 'Unknown';
 
-Widget _buildVerseBookmarkCard(
-  BuildContext context,
-  int surahNum,
-  int verseNum,
-) {
+    return _bookmarkContainer(
+      context,
+      title: "Page $page",
+      subtitle: firstSurahName,
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => QuranPageView(pageNumber: page)),
+        );
+      },
+    );
+  }
+
+  if (bookmark.startsWith("hadith:")) {
+    final parts = bookmark.split(":");
+
+    if (parts.length < 4) return const SizedBox.shrink();
+
+    final bookSlug = parts[1];
+    final chapterId = parts[2];
+    final hadithId = parts[3];
+
+    return _bookmarkContainer(
+      context,
+      title: "Hadith #$hadithId",
+      subtitle: bookSlug.replaceAll("-", " ").toUpperCase(),
+      onTap: () {
+        print(
+          'Opening hadith → book: $bookSlug | chapter: $chapterId | hadith: $hadithId',
+        );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => HadithView(
+              bookSlug: bookSlug,
+              chapterId: chapterId,
+              hadithId: hadithId,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  final parts = bookmark.split(":");
+  if (parts.length < 2) return const SizedBox.shrink();
+  final surahNum = int.tryParse(parts[0]) ?? 0;
+  final verseNum = int.tryParse(parts[1]) ?? 0;
   final surahName = quran.getSurahName(surahNum);
-  return GestureDetector(
+
+  return _bookmarkContainer(
+    context,
+    title: "$surahName : $verseNum",
+    subtitle: "Verse",
     onTap: () {
       Navigator.push(
         context,
@@ -1493,23 +1595,42 @@ Widget _buildVerseBookmarkCard(
         ),
       );
     },
+  );
+}
+
+Widget _bookmarkContainer(
+  BuildContext context, {
+  required String title,
+  String? subtitle,
+  required VoidCallback onTap,
+}) {
+  return GestureDetector(
+    onTap: onTap,
     child: Container(
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
+        border: Border.all(color: AppColors.violet, width: 1.2),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.15),
-            blurRadius: 6,
-            offset: const Offset(0, 3),
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 5,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
-      child: Text(
-        "$surahName : $verseNum",
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+          ),
+          if (subtitle != null)
+            Text(subtitle, style: const TextStyle(color: Colors.grey)),
+        ],
       ),
     ),
   );

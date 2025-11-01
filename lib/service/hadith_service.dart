@@ -69,6 +69,7 @@ class HadithService {
     // Success
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
+      print(data);
 
       if (data['hadiths'] != null && data['hadiths']['data'] is List) {
         final list = data['hadiths']['data'] as List;

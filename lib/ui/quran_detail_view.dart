@@ -408,7 +408,9 @@ Widget _buildShareButton(
       height: 20,
     ),
     onPressed: () {
-      final arabicClean = cleanArabic(verse["arabic"]!);
+      final arabicClean = cleanArabic(
+        quran.getVerse(surahNumber, verseNum, verseEndSymbol: false),
+      );
 
       final textToShare =
           "$arabicClean\n\n${verse["translation"]}\n\n"
@@ -732,7 +734,7 @@ void showSurahList(BuildContext context, QuranDetailProvider provider) {
                             ),
                             subtitle: Text("$english • $ayahCount verses"),
                             onTap: () async {
-                              Navigator.pop(context); 
+                              Navigator.pop(context);
                               await provider.loadSurah(num);
                             },
                           );
