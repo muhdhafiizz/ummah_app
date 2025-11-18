@@ -105,6 +105,8 @@ flutter:
     - assets/icon/empty_data_icon.png
     - assets/images/fpx_logo.png
     - assets/audio/adhan_notification_cut.mp3
+    - assets/icon/dua_icon.png
+    - assets/icon/dua_1_icon.png
 
   fonts:
     - family: Liter

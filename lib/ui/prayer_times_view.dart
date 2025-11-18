@@ -22,6 +22,7 @@ import 'package:ramadhan_companion_app/provider/notifications_provider.dart';
 import 'package:ramadhan_companion_app/provider/prayer_times_provider.dart';
 import 'package:ramadhan_companion_app/provider/quran_provider.dart';
 import 'package:ramadhan_companion_app/ui/details_bookmark_view.dart';
+import 'package:ramadhan_companion_app/ui/details_doa_view.dart';
 import 'package:ramadhan_companion_app/ui/details_masjid_programme_view.dart';
 import 'package:ramadhan_companion_app/ui/details_verse_view.dart';
 import 'package:ramadhan_companion_app/ui/hadith_books_view.dart';
@@ -1207,41 +1208,50 @@ Widget _buildInsertText() {
 }
 
 Widget _buildIconsGrid(BuildContext context, PrayerTimesProvider provider) {
-  return Column(
-    children: [
-      Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: GridView.count(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisCount: 3,
-          mainAxisSpacing: 10,
-          crossAxisSpacing: 20,
-          children: [
-            _buildQuran(context),
-            _buildQiblaFinder(context, provider),
-            _buildLocateMasjidNearby(context, provider),
-            _buildSedekah(context),
-            _buildHadith(context),
-            _buildIslamicCalendar(context, provider),
-          ],
-        ),
+  final icons = [
+    _buildQuran(context),
+    _buildQiblaFinder(context, provider),
+    _buildLocateMasjidNearby(context, provider),
+    _buildSedekah(context),
+    _buildHadith(context),
+    _buildIslamicCalendar(context, provider),
+    _buildDoa(context),
+    // _buildComingSoon(context), // optional filler to make 8 total
+  ];
+
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 20),
+    child: SizedBox(
+      height: 220,
+      child: GridView.count(
+        crossAxisCount: 4,
+        childAspectRatio: 0.8,
+        crossAxisSpacing: 20,
+        mainAxisSpacing: 20,
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        children: icons.take(8).toList(),
       ),
-      // StreamBuilder<List<ConnectivityResult>>(
-      //   stream: Connectivity().onConnectivityChanged,
-      //   builder: (context, snapshot) {
-      //     final hasInternet =
-      //         snapshot.hasData &&
-      //         !snapshot.data!.contains(ConnectivityResult.none);
+    ),
+  );
+}
 
-      //     if (!hasInternet) {
-      //       return buildNoInternet(context);
-      //     }
-
-      //     return SizedBox.shrink();
-      //   },
-      // ),
-    ],
+Widget _buildDoa(BuildContext context) {
+  return GestureDetector(
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => DetailsDoaView()),
+      );
+    },
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Image.asset('assets/icon/dua_1_icon.png', height: 50, width: 50),
+        const SizedBox(height: 5),
+        const Text("Doa", style: TextStyle(fontWeight: FontWeight.bold)),
+      ],
+    ),
   );
 }
 
@@ -1254,8 +1264,9 @@ Widget _buildSedekah(BuildContext context) {
       );
     },
     child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Image.asset('assets/icon/donation_icon.png', height: 50, width: 50),
+        Image.asset('assets/icon/donation_icon.png', height: 40, width: 40),
         const SizedBox(height: 5),
         const Text("Sadaqah", style: TextStyle(fontWeight: FontWeight.bold)),
       ],
@@ -1359,7 +1370,7 @@ Widget _buildQuran(BuildContext context) {
     },
     child: Column(
       children: [
-        Image.asset('assets/icon/quran_icon.png', height: 50, width: 50),
+        Image.asset('assets/icon/quran_icon.png', height: 40, width: 40),
         const SizedBox(height: 5),
         const Text("Quran", style: TextStyle(fontWeight: FontWeight.bold)),
       ],
@@ -1377,7 +1388,7 @@ Widget _buildHadith(BuildContext context) {
     },
     child: Column(
       children: [
-        Image.asset('assets/icon/hadith_icon.png', height: 50, width: 50),
+        Image.asset('assets/icon/hadith_icon.png', height: 40, width: 40),
         const SizedBox(height: 5),
         const Text("Hadith", style: TextStyle(fontWeight: FontWeight.bold)),
       ],
@@ -1402,12 +1413,14 @@ Widget _buildLocateMasjidNearby(
       );
     },
     child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Image.asset('assets/icon/masjid_icon.png', height: 50, width: 50),
+        Image.asset('assets/icon/masjid_icon.png', height: 40, width: 40),
         const SizedBox(height: 5),
         const Text(
           "Nearby Mosque",
           style: TextStyle(fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
         ),
       ],
     ),
@@ -1429,9 +1442,13 @@ Widget _buildQiblaFinder(BuildContext context, PrayerTimesProvider provider) {
     },
     child: Column(
       children: [
-        Image.asset('assets/icon/kaaba_icon.png', height: 50, width: 50),
+        Image.asset('assets/icon/kaaba_icon.png', height: 40, width: 40),
         SizedBox(height: 5),
-        Text("Qibla Finder", style: TextStyle(fontWeight: FontWeight.bold)),
+        Text(
+          "Qibla Finder",
+          style: TextStyle(fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
       ],
     ),
   );
@@ -1452,11 +1469,15 @@ Widget _buildIslamicCalendar(
       children: [
         Image.asset(
           'assets/icon/islamic_calendar_icon.png',
-          height: 50,
-          width: 50,
+          height: 40,
+          width: 40,
         ),
         SizedBox(height: 5),
-        Text("Islamic Calendar", style: TextStyle(fontWeight: FontWeight.bold)),
+        Text(
+          "Islamic Calendar",
+          style: TextStyle(fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
       ],
     ),
   );
