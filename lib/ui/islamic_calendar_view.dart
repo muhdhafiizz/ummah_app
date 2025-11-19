@@ -27,23 +27,23 @@ class IslamicCalendarView extends StatelessWidget {
                   const SizedBox(height: 10),
 
                   /// Weekday headers
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: HijriCalendar.shortWeekdays
-                        .map(
-                          (day) => Expanded(
-                            child: Center(
-                              child: Text(
-                                day,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                        )
-                        .toList(),
-                  ),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  //   children: HijriCalendar.shortWeekdays
+                  //       .map(
+                  //         (day) => Expanded(
+                  //           child: Center(
+                  //             child: Text(
+                  //               day,
+                  //               style: const TextStyle(
+                  //                 fontWeight: FontWeight.bold,
+                  //               ),
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       )
+                  //       .toList(),
+                  // ),
                   const SizedBox(height: 10),
 
                   /// Calendar Grid

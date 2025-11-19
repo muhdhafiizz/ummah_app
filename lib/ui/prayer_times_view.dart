@@ -1215,7 +1215,7 @@ Widget _buildIconsGrid(BuildContext context, PrayerTimesProvider provider) {
     _buildSedekah(context),
     _buildHadith(context),
     _buildIslamicCalendar(context, provider),
-    _buildDoa(context),
+    // _buildDoa(context),
     // _buildComingSoon(context), // optional filler to make 8 total
   ];
 
@@ -1224,10 +1224,10 @@ Widget _buildIconsGrid(BuildContext context, PrayerTimesProvider provider) {
     child: SizedBox(
       height: 220,
       child: GridView.count(
-        crossAxisCount: 4,
-        childAspectRatio: 0.8,
-        crossAxisSpacing: 20,
-        mainAxisSpacing: 20,
+        crossAxisCount: 3,
+        childAspectRatio: 1,
+        // crossAxisSpacing: 10,
+        // mainAxisSpacing: 10,
         physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         children: icons.take(8).toList(),
@@ -1236,24 +1236,24 @@ Widget _buildIconsGrid(BuildContext context, PrayerTimesProvider provider) {
   );
 }
 
-Widget _buildDoa(BuildContext context) {
-  return GestureDetector(
-    onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => DetailsDoaView()),
-      );
-    },
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Image.asset('assets/icon/dua_1_icon.png', height: 50, width: 50),
-        const SizedBox(height: 5),
-        const Text("Doa", style: TextStyle(fontWeight: FontWeight.bold)),
-      ],
-    ),
-  );
-}
+// Widget _buildDoa(BuildContext context) {
+//   return GestureDetector(
+//     onTap: () {
+//       Navigator.push(
+//         context,
+//         MaterialPageRoute(builder: (_) => DetailsDoaView()),
+//       );
+//     },
+//     child: Column(
+//       crossAxisAlignment: CrossAxisAlignment.center,
+//       children: [
+//         Image.asset('assets/icon/dua_1_icon.png', height: 50, width: 50),
+//         const SizedBox(height: 5),
+//         const Text("Doa", style: TextStyle(fontWeight: FontWeight.bold)),
+//       ],
+//     ),
+//   );
+// }
 
 Widget _buildSedekah(BuildContext context) {
   return GestureDetector(

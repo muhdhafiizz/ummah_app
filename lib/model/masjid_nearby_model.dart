@@ -8,7 +8,11 @@ class MasjidNearbyModel {
   final double longitude;
   final List<String> photoReference;
   final double? rating;
-  final String? wikidataId; // 👈 add this
+  final String? wikidataId;
+  final String? building;
+  final String? denomination;
+  final String? wheelchair;
+  // final String postcode;
 
   MasjidNearbyModel({
     required this.id,
@@ -19,8 +23,12 @@ class MasjidNearbyModel {
     required this.latitude,
     required this.longitude,
     required this.photoReference,
+    // required this.postcode,
     this.rating,
     this.wikidataId,
+    this.building,
+    this.denomination,
+    this.wheelchair,
   });
 
   factory MasjidNearbyModel.fromJson(Map<String, dynamic> json) {
@@ -30,16 +38,21 @@ class MasjidNearbyModel {
       address: json["formatted"] ?? "Unknown Address",
       city: json["city"] ?? json["suburb"] ?? json["town"] ?? "",
       state: json["state"] ?? "",
-      latitude: json["lat"] ?? 0,
-      longitude: json["lon"] ?? 0,
+      latitude: (json["lat"] as num?)?.toDouble() ?? 0,
+      longitude: (json["lon"] as num?)?.toDouble() ?? 0,
       photoReference: [],
       rating: null,
-      wikidataId: json["wiki_and_media"]?["wikidata"] ??
-          json["wikidata"], // 👈 capture Wikidata ID
+      wikidataId: json["wiki_and_media"]?["wikidata"] ?? json["wikidata"],
+      // postcode: json["postcode"] ?? "Unavailable postcode",
+      building:
+          json["datasource"]?["raw"]?["building"] ??
+          json["raw"]?["building"] ??
+          json["building"]?.toString(),
+      denomination: json["denomination"] ?? "unknown",
+      wheelchair: json["wheelchair"] ?? "unspecified"
     );
   }
 }
-
 
 class LatLng {
   final double lat;

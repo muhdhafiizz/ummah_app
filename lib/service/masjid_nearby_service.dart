@@ -74,15 +74,24 @@ class MasjidNearbyService {
           id: props["place_id"] ?? "",
           name: props["name"] ?? "Unknown Masjid",
           address: props["formatted"] ?? "Unknown Address",
-          city: props["suburb"] ?? props["town"] ?? "",
+          city:
+              props["suburb"] ??
+              props["town"] ??
+              props["district"] ??
+              props["datasource"]?["raw"]?["addr:place"] ??
+              props["datasource"]?["raw"]?["addr:city"] ??
+              props["hamlet"] ??
+              props["street"] ??
+              "",
           state: props["city"] ?? props["state"] ?? "",
           latitude: geometry[1],
           longitude: geometry[0],
-          photoReference: imageUrl != null
-              ? [imageUrl]
-              : [], // ✅ use Wikimedia image
+          photoReference: imageUrl != null ? [imageUrl] : [],
           rating: null,
           wikidataId: wikidataId,
+          building: props["datasource"]?["raw"]?["building"],
+          denomination: props["datasource"]?["raw"]?["denomination"],
+          wheelchair: props["datasource"]?["raw"]?["wheelchair"]
         ),
       );
     }
