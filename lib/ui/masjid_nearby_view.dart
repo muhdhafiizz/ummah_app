@@ -66,6 +66,9 @@ class MasjidNearbyScreen extends StatelessWidget {
                             ratings: masjid.rating ?? 0,
                             latitude: masjid.latitude,
                             longitude: masjid.longitude,
+                            building: masjid.building,
+                            denomination: masjid.denomination,
+                            wheelchair: masjid.wheelchair,
                             provider: provider,
                           );
                         },
@@ -117,6 +120,9 @@ Widget _buildMasjidCard({
   required double ratings,
   required double latitude,
   required double longitude,
+  required String? building,
+  required String? denomination,
+  required String? wheelchair,
   required MasjidNearbyProvider provider,
 }) {
   return Padding(
@@ -134,15 +140,41 @@ Widget _buildMasjidCard({
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // 🔹 Masjid Info
-            Text(
-              name,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-                color: Colors.black,
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+            Row(
+              children: [
+                Text(
+                  name,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Colors.black,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                SizedBox(width: 5),
+                if (building == 'yes' ||
+                    building == 'mosque' ||
+                    denomination == 'sunni')
+                  Container(
+                    padding: EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: Colors.green[100],
+                    ),
+                    child: Icon(Icons.mosque, size: 14, color: Colors.green),
+                  ),
+                SizedBox(width: 5),
+                if (wheelchair == 'yes')
+                  Container(
+                    padding: EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: Colors.blue[100],
+                    ),
+                    child: Icon(Icons.accessible, size: 14, color: Colors.blue),
+                  ),
+              ],
             ),
             const SizedBox(height: 4),
             Text(
