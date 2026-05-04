@@ -9,7 +9,6 @@ class MasjidNearbyService {
   static const String _geocodeBaseUrl =
       'https://api.geoapify.com/v1/geocode/search';
 
-  /// Get latitude and longitude from city + country using Geoapify geocoding
   Future<LatLng> getLatLngFromAddress(String city, String country) async {
     final address = Uri.encodeComponent("$city, $country");
     final url = Uri.parse(
@@ -21,7 +20,6 @@ class MasjidNearbyService {
 
     if (response.statusCode == 200 && data["features"].isNotEmpty) {
       final coords = data["features"][0]["geometry"]["coordinates"];
-      // Geoapify returns [lon, lat]
       return LatLng(coords[1], coords[0]);
     } else {
       throw Exception(
@@ -30,7 +28,6 @@ class MasjidNearbyService {
     }
   }
 
-  /// Fetch nearby masjids (Geoapify category: religion.place_of_worship.islam)
   Future<List<MasjidNearbyModel>> getNearbyMasjids(
     double lat,
     double lng,

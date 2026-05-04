@@ -6,10 +6,12 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:ramadhan_companion_app/model/hijri_date_model.dart';
+import 'package:ramadhan_companion_app/model/news_model.dart';
 import 'package:ramadhan_companion_app/model/prayer_times_model.dart';
 import 'package:ramadhan_companion_app/model/quran_daily_model.dart';
 import 'package:ramadhan_companion_app/model/random_hadith_model.dart';
 import 'package:ramadhan_companion_app/service/hijri_date_service.dart';
+import 'package:ramadhan_companion_app/service/news_service.dart';
 import 'package:ramadhan_companion_app/service/prayer_times_service.dart';
 import 'package:ramadhan_companion_app/service/quran_daily_service.dart';
 import 'package:ramadhan_companion_app/service/random_hadith_service.dart';
@@ -43,6 +45,8 @@ class PrayerTimesProvider extends ChangeNotifier {
   DateTime get selectedDate => _selectedDate;
   DateTime get activeDate => _activeDate;
   HijriDateModel? _hijriDateModel;
+  // NewsModel? _newsModel;
+  List<NewsItem> _newsModel = [];
   PrayerTimesModel? _times;
   QuranDailyModel? _quranDaily;
   RandomHadithModel? _hadithDaily;
@@ -73,6 +77,7 @@ class PrayerTimesProvider extends ChangeNotifier {
   HijriDateModel? get activeHijriDateModel => _hijriDateModel;
   QuranDailyModel? get quranDaily => _quranDaily;
   RandomHadithModel? get hadithDaily => _hadithDaily;
+  List<NewsItem> get newsModel => _newsModel;
 
   PrayerTimesProvider() {
     _init();
@@ -158,6 +163,17 @@ class PrayerTimesProvider extends ChangeNotifier {
     } finally {
       _isPrayerTimesLoading = false;
       notifyListeners();
+    }
+  }
+
+  Future<void> fetchMuslimNews() async {
+    print('fetchMuslimNews');
+    try {
+      final service = NewsService();
+      _newsModel = await service.getMuslimNews();
+      notifyListeners();
+    } catch (e) {
+      debugPrint('❌ Failed to load Muslim News: $e');
     }
   }
 
@@ -248,6 +264,7 @@ class PrayerTimesProvider extends ChangeNotifier {
       await fetchRandomHadith();
     }
 
+    await fetchMuslimNews();
     await fetchHijriDate();
     _initialized = true;
     notifyListeners();

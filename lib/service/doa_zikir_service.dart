@@ -15,7 +15,7 @@ class DoaService {
       final cached = prefs.getString('cached_all_doa');
       if (cached != null && cached.isNotEmpty) {
         final List data = json.decode(cached);
-        return data.map((e) => DoaModel.fromJson(e)).toList();
+        return data.map((e) => DoaModel.fromJson(e)).toList();  
       }
     }
 

@@ -36,72 +36,91 @@ class WebViewPage extends StatelessWidget {
                   _buildAppBar(context, title),
                   const SizedBox(height: 10),
                   Expanded(
-                    child: InAppWebView(
-                      initialUrlRequest: URLRequest(
-                        url: WebUri(formatUrl(url)),
-                      ),
-                      onLoadStop: (controller, uri) async {
-                        if (uri == null) return;
-                        final currentUrl = uri.toString();
-                        debugPrint("Redirected to: $currentUrl");
+                    child: Column(
+                      children: [
+                        // 🔵 PROGRESS BAR
+                        provider.progress < 1
+                            ? LinearProgressIndicator(
+                                value: provider.progress,
+                                backgroundColor: Colors.grey.shade300,
+                                minHeight: 4,
+                              )
+                            : const SizedBox.shrink(),
 
-                        // ✅ SUCCESS CASE
-                        if (currentUrl.contains("/success/")) {
-                          provider.setStatus("success");
-
-                          try {
-                            // ✅ Mark notification as paid
-                            if (notificationDocId != null) {
-                              await FirebaseFirestore.instance
-                                  .collection('notifications')
-                                  .doc(notificationDocId)
-                                  .update({'paid': true});
-                            }
-
-                            bool isProgramme = false;
-
-                            // ✅ If sadaqah payment
-                            if (sadaqahId != null) {
-                              final sadaqahProvider = context.read<SadaqahProvider>();
-                              await sadaqahProvider.paySadaqah(sadaqahId!);
-                            }
-
-                            // ✅ If masjid programme payment
-                            if (programmeId != null) {
-                              isProgramme = true;
-                              await FirebaseFirestore.instance
-                                  .collection('masjidProgrammes')
-                                  .doc(programmeId)
-                                  .update({'status': 'paid', 'paid': true});
-                            }
-
-                            // ✅ Redirect to result page
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => PaymentResultsView(
-                                  isSuccess: true,
-                                  isProgramme: isProgramme, // ✅ pass type
-                                ),
-                              ),
-                            );
-                          } catch (e) {
-                            debugPrint("❌ Firestore update error: $e");
-                          }
-                        }
-                        // ❌ FAILURE CASE
-                        else if (currentUrl.contains("/failure/")) {
-                          provider.setStatus("failure");
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const PaymentResultsView(
-                                isSuccess: false,
-                              ),
+                        // 🔵 WEBVIEW
+                        Expanded(
+                          child: InAppWebView(
+                            initialUrlRequest: URLRequest(
+                              url: WebUri(formatUrl(url)),
                             ),
-                          );
-                        }
-                      },
+
+                            // ⬅️ update loading progress
+                            onProgressChanged: (controller, progress) {
+                              provider.setProgress(progress / 100);
+                            },
+
+                            onLoadStop: (controller, uri) async {
+                              if (uri == null) return;
+                              final currentUrl = uri.toString();
+                              debugPrint("Redirected to: $currentUrl");
+
+                              if (currentUrl.contains("/success/")) {
+                                provider.setStatus("success");
+
+                                try {
+                                  if (notificationDocId != null) {
+                                    await FirebaseFirestore.instance
+                                        .collection('notifications')
+                                        .doc(notificationDocId)
+                                        .update({'paid': true});
+                                  }
+
+                                  bool isProgramme = false;
+
+                                  if (sadaqahId != null) {
+                                    await context
+                                        .read<SadaqahProvider>()
+                                        .paySadaqah(sadaqahId!);
+                                  }
+
+                                  if (programmeId != null) {
+                                    isProgramme = true;
+                                    await FirebaseFirestore.instance
+                                        .collection('masjidProgrammes')
+                                        .doc(programmeId)
+                                        .update({
+                                          'status': 'paid',
+                                          'paid': true,
+                                        });
+                                  }
+
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => PaymentResultsView(
+                                        isSuccess: true,
+                                        isProgramme: isProgramme,
+                                      ),
+                                    ),
+                                  );
+                                } catch (e) {
+                                  debugPrint("❌ Firestore update error: $e");
+                                }
+                              } else if (currentUrl.contains("/failure/")) {
+                                provider.setStatus("failure");
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const PaymentResultsView(
+                                      isSuccess: false,
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],

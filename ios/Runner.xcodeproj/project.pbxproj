@@ -96,7 +96,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		8661C5A32E8E650200289443 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		8661C5A32E8E650200289443 /* Exceptions for "PrayerTimeWidget" folder in "PrayerTimeWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -106,8 +106,29 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		86A8AFBB2E6F1FF0003197A9 /* Resources */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Resources; sourceTree = "<group>"; };
-		86CA55112E69D9990091E859 /* PrayerTimeWidget */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (8661C5A32E8E650200289443 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = PrayerTimeWidget; sourceTree = "<group>"; };
+		86A8AFBB2E6F1FF0003197A9 /* Resources */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		86CA55112E69D9990091E859 /* PrayerTimeWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				8661C5A32E8E650200289443 /* Exceptions for "PrayerTimeWidget" folder in "PrayerTimeWidgetExtension" target */,
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = PrayerTimeWidget;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */

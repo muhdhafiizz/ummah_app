@@ -22,7 +22,7 @@ import 'package:ramadhan_companion_app/provider/notifications_provider.dart';
 import 'package:ramadhan_companion_app/provider/prayer_times_provider.dart';
 import 'package:ramadhan_companion_app/provider/quran_provider.dart';
 import 'package:ramadhan_companion_app/ui/details_bookmark_view.dart';
-import 'package:ramadhan_companion_app/ui/details_doa_view.dart';
+// import 'package:ramadhan_companion_app/ui/details_doa_view.dart';
 import 'package:ramadhan_companion_app/ui/details_masjid_programme_view.dart';
 import 'package:ramadhan_companion_app/ui/details_verse_view.dart';
 import 'package:ramadhan_companion_app/ui/hadith_books_view.dart';
@@ -36,6 +36,7 @@ import 'package:ramadhan_companion_app/ui/quran_page_view.dart';
 import 'package:ramadhan_companion_app/ui/quran_view.dart';
 import 'package:ramadhan_companion_app/ui/sadaqah_view.dart';
 import 'package:ramadhan_companion_app/ui/settings_view.dart';
+import 'package:ramadhan_companion_app/ui/webview_view.dart';
 import 'package:ramadhan_companion_app/widgets/app_colors.dart';
 import 'package:ramadhan_companion_app/widgets/custom_button.dart';
 import 'package:ramadhan_companion_app/widgets/custom_pill_snackbar.dart';
@@ -161,12 +162,14 @@ class PrayerTimesView extends StatelessWidget {
                           _buildPrayerTimesSection(provider),
                           const SizedBox(height: 20),
                           _buildMasjidProgramme(context),
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 20),
                           _dailyVerseCarousel(
                             provider,
                             carouselProvider,
                             context,
                           ),
+                          // const SizedBox(height: 20),
+                          // _buildMuslimNews(context),
                         ],
                       ),
                     ),
@@ -2367,6 +2370,66 @@ Widget _buildDescriptionText(String name) {
 //     },
 //   );
 // }
+
+Widget _buildMuslimNews(BuildContext context) {
+  final provider = context.watch<PrayerTimesProvider>();
+
+  return Column(
+    children: [
+      _buildTitleText('All around Malaysia ✈️🇲🇾'),
+      SizedBox(
+        height: 250,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: provider.newsModel.length,
+          itemBuilder: (context, index) {
+            final item = provider.newsModel[index];
+
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: InkWell(
+                onTap: () {
+                  // launchUrl(Uri.parse(item.link));
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => WebViewPage(url: item.link, title: 'News')));
+                },
+                child: SizedBox(
+                  width: 260,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Image.network(
+                        item.mediaUrl,
+                        width: 260,
+                        height: 150,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Container(
+                          width: 260,
+                          height: 150,
+                          color: Colors.grey.shade300,
+                          child: Icon(Icons.broken_image),
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        item.title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    ],
+  );
+}
 
 Widget _buildCustomCalendar(BuildContext context) {
   return Consumer<PrayerTimesProvider>(
